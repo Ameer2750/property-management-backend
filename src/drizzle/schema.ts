@@ -4,9 +4,10 @@ export const user = pgTable('user', {
   id: serial('id').primaryKey(),
   username: varchar('username', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).unique().notNull(),
-  phone: varchar('phone', { length: 20 }),
+  phone: varchar('phone', { length: 20 }).unique(), // Ensure this line is correct
   role: varchar('role', { length: 50 }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 export const propertyOwner = pgTable('property_owner', {

@@ -1,6 +1,6 @@
 {
-  "id": "75a3c7b1-1e1f-44b2-abdd-01f19acda3c9",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "b07cadee-9051-499d-8523-40a21bc1f6a3",
+  "prevId": "75a3c7b1-1e1f-44b2-abdd-01f19acda3c9",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -1010,6 +1010,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -1021,6 +1028,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
+          ]
+        },
+        "user_phone_unique": {
+          "name": "user_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
           ]
         }
       }

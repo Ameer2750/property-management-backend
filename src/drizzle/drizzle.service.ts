@@ -3,7 +3,7 @@ import {
     PostgresJsDatabase,
     drizzle as drizzlePgJs,
 } from 'drizzle-orm/postgres-js';
-import { NEST_DRIZZLE_OPTIONS } from '../utils/constants';
+import { NEST_DRIZZLE_OPTIONS } from '../common/utilities/constants';
 import { NestDrizzleOptions } from './interfaces/drizzle.interface';
 import * as postgres from 'postgres';
 import { migrate as migratePgJs } from 'drizzle-orm/postgres-js/migrator';
