@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, timestamp, boolean, integer, numeric } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, timestamp, boolean, integer, numeric, decimal } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('user', {
   id: serial('id').primaryKey(),
@@ -10,6 +10,18 @@ export const user = pgTable('user', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+export const address = pgTable('address', {
+  id: serial('id').primaryKey(),
+  propertyId: integer('property_id').references(() => property.id),
+  userId: integer('user_id').references(() => user.id),
+  blockNo: varchar('block_no', { length: 255 }),
+  locality: varchar('locality', { length: 255 }),
+  city: varchar('city', { length: 255 }),
+  state: varchar('state', { length: 255 }),
+  pincode: varchar('pincode', { length: 255 }),
+  country: varchar('country', { length: 255 }).default('India')
+});
+
 export const propertyOwner = pgTable('property_owner', {
   id: serial('id').primaryKey(),
   propertyId: integer('property_id').references(() => property.id),
@@ -18,10 +30,12 @@ export const propertyOwner = pgTable('property_owner', {
 
 export const property = pgTable('property', {
   id: serial('id').primaryKey(),
+  addressId: integer('address_id').references(() => address.id),
   name: varchar('name', { length: 255 }).notNull(),
-  location: varchar('location', { length: 255 }).notNull(),
   contact: varchar('contact', { length: 255 }).notNull(),
   description: varchar('description', { length: 1000 }),
+  genderPreference: varchar('gender_preference', { length: 200 }),
+  suitability: varchar('suitability', { length: 200 })
 });
 
 export const floor = pgTable('floor', {
@@ -31,14 +45,21 @@ export const floor = pgTable('floor', {
   name: varchar('name', { length: 255 }),
 });
 
+export const roomType = pgTable('room_type', {
+  id: serial('id').primaryKey(),
+  property_id: integer('property_id').references(() => property.id),
+  name: varchar('name', {length: 255}),
+  rent: decimal('rent'),
+  square_footage: integer('square_footage'),
+  occupancy_limit: integer('occupancy_limit'),
+  bedRate: decimal('bed_rate')
+})
+
 export const room = pgTable('room', {
   id: serial('id').primaryKey(),
   floorId: integer('floor_id').references(() => floor.id),
   name: varchar('name', { length: 255 }).notNull(),
-  roomType: varchar('room_type', { length: 50 }).notNull(),
-  rent: numeric('rent').notNull(),
-  squareFootage: integer('square_footage').notNull(),
-  occupancyLimit: integer('occupancy_limit').notNull(),
+  roomTypeId: integer('room_type_id').references(() => roomType.id),
   availableBeds: integer('available_beds').notNull(),
   occupiedBeds: integer('occupied_beds').notNull(),
   bedRate: numeric('bed_rate').notNull(),
@@ -72,10 +93,15 @@ export const rentAgreement = pgTable('rent_agreement', {
   userId: integer('user_id').references(() => user.id),
   rentCycle: varchar('rent_cycle', { length: 50 }).notNull(),
   gracePeriod: integer('grace_period').notNull(),
-  fineForLatePayment: numeric('fine_for_late_payment'),
+  fineForLatePayment: boolean('fine_for_late_payment'),
+  fineForLatePaymentAmount: decimal('fine_for_late_payment_amount'),
   extraCharges: boolean('extra_charges').default(false),
-  advancePayment: numeric('advance_payment'),
-  pendingAmount: numeric('pending_amount'),
+  securityDeposit: decimal('security_deposit'),
+  agreementDuration: integer('agreement_duration'),
+  lockInPeriod: integer('lock_in_period'),
+  noticePeriod: integer('notice_period'),
+  advancePayment: numeric('advance_payment'), // Initial advance payment as part of the agreement terms
+  pendingAmount: numeric('pending_amount'), // Remaining amount to be paid
   startDate: timestamp('start_date').notNull(),
   endDate: timestamp('end_date'),
 });
@@ -87,10 +113,11 @@ export const payment = pgTable('payment', {
   paymentDate: timestamp('payment_date').notNull(),
   paymentMethod: varchar('payment_method', { length: 50 }).notNull(),
   transactionId: varchar('transaction_id', { length: 255 }).notNull(),
-  isAdvance: boolean('is_advance').default(false),
+  isAdvance: boolean('is_advance').default(false), // Indicates if the payment is an advance
   paymentForPeriod: varchar('payment_for_period', { length: 50 }).notNull(),
   status: varchar('status', { length: 50 }).notNull(),
 });
+
 
 export const maintenanceRequest = pgTable('maintenance_request', {
   id: serial('id').primaryKey(),

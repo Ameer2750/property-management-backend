@@ -1,3 +1,15 @@
+CREATE TABLE IF NOT EXISTS "address" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"property_id" integer,
+	"user_id" integer,
+	"block_no" varchar(255),
+	"locality" varchar(255),
+	"city" varchar(255),
+	"state" varchar(255),
+	"pincode" varchar(255),
+	"country" varchar(255) DEFAULT 'India'
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "bed_allocation" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"room_id" integer,
@@ -66,10 +78,12 @@ CREATE TABLE IF NOT EXISTS "payment" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "property" (
 	"id" serial PRIMARY KEY NOT NULL,
+	"address_id" integer,
 	"name" varchar(255) NOT NULL,
-	"location" varchar(255) NOT NULL,
 	"contact" varchar(255) NOT NULL,
-	"description" varchar(1000)
+	"description" varchar(1000),
+	"gender_preference" varchar(200),
+	"suitability" varchar(200)
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "property_owner" (
@@ -85,8 +99,13 @@ CREATE TABLE IF NOT EXISTS "rent_agreement" (
 	"user_id" integer,
 	"rent_cycle" varchar(50) NOT NULL,
 	"grace_period" integer NOT NULL,
-	"fine_for_late_payment" numeric,
+	"fine_for_late_payment" boolean,
+	"fine_for_late_payment_amount" numeric,
 	"extra_charges" boolean DEFAULT false,
+	"security_deposit" numeric,
+	"agreement_duration" integer,
+	"lock_in_period" integer,
+	"notice_period" integer,
 	"advance_payment" numeric,
 	"pending_amount" numeric,
 	"start_date" timestamp NOT NULL,
@@ -97,10 +116,7 @@ CREATE TABLE IF NOT EXISTS "room" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"floor_id" integer,
 	"name" varchar(255) NOT NULL,
-	"room_type" varchar(50) NOT NULL,
-	"rent" numeric NOT NULL,
-	"square_footage" integer NOT NULL,
-	"occupancy_limit" integer NOT NULL,
+	"room_type_id" integer,
 	"available_beds" integer NOT NULL,
 	"occupied_beds" integer NOT NULL,
 	"bed_rate" numeric NOT NULL,
@@ -116,6 +132,16 @@ CREATE TABLE IF NOT EXISTS "room_room_feature" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"room_id" integer,
 	"feature_id" integer
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "room_type" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"property_id" integer,
+	"name" varchar(255),
+	"rent" numeric,
+	"square_footage" integer,
+	"occupancy_limit" integer,
+	"bed_rate" numeric
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "tenant" (
@@ -134,8 +160,22 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"phone" varchar(20),
 	"role" varchar(50) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "user_email_unique" UNIQUE("email")
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "user_email_unique" UNIQUE("email"),
+	CONSTRAINT "user_phone_unique" UNIQUE("phone")
 );
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "address" ADD CONSTRAINT "address_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "address" ADD CONSTRAINT "address_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "bed_allocation" ADD CONSTRAINT "bed_allocation_room_id_room_id_fk" FOREIGN KEY ("room_id") REFERENCES "public"."room"("id") ON DELETE no action ON UPDATE no action;
@@ -204,6 +244,12 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "property" ADD CONSTRAINT "property_address_id_address_id_fk" FOREIGN KEY ("address_id") REFERENCES "public"."address"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "property_owner" ADD CONSTRAINT "property_owner_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -240,6 +286,12 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "room" ADD CONSTRAINT "room_room_type_id_room_type_id_fk" FOREIGN KEY ("room_type_id") REFERENCES "public"."room_type"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "room_room_feature" ADD CONSTRAINT "room_room_feature_room_id_room_id_fk" FOREIGN KEY ("room_id") REFERENCES "public"."room"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -247,6 +299,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "room_room_feature" ADD CONSTRAINT "room_room_feature_feature_id_room_feature_id_fk" FOREIGN KEY ("feature_id") REFERENCES "public"."room_feature"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "room_type" ADD CONSTRAINT "room_type_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

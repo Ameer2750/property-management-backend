@@ -1,9 +1,101 @@
 {
-  "id": "75a3c7b1-1e1f-44b2-abdd-01f19acda3c9",
+  "id": "ce3fcb01-dcb8-49e1-a8c7-c0e37f5e0174",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.address": {
+      "name": "address",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "property_id": {
+          "name": "property_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_no": {
+          "name": "block_no",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "locality": {
+          "name": "locality",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "city": {
+          "name": "city",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "state": {
+          "name": "state",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pincode": {
+          "name": "pincode",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'India'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "address_property_id_property_id_fk": {
+          "name": "address_property_id_property_id_fk",
+          "tableFrom": "address",
+          "tableTo": "property",
+          "columnsFrom": [
+            "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "address_user_id_user_id_fk": {
+          "name": "address_user_id_user_id_fk",
+          "tableFrom": "address",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.bed_allocation": {
       "name": "bed_allocation",
       "schema": "",
@@ -509,14 +601,14 @@
           "primaryKey": true,
           "notNull": true
         },
+        "address_id": {
+          "name": "address_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "name": {
           "name": "name",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "location": {
-          "name": "location",
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
@@ -532,10 +624,36 @@
           "type": "varchar(1000)",
           "primaryKey": false,
           "notNull": false
+        },
+        "gender_preference": {
+          "name": "gender_preference",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suitability": {
+          "name": "suitability",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "property_address_id_address_id_fk": {
+          "name": "property_address_id_address_id_fk",
+          "tableFrom": "property",
+          "tableTo": "address",
+          "columnsFrom": [
+            "address_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -636,6 +754,12 @@
         },
         "fine_for_late_payment": {
           "name": "fine_for_late_payment",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fine_for_late_payment_amount": {
+          "name": "fine_for_late_payment_amount",
           "type": "numeric",
           "primaryKey": false,
           "notNull": false
@@ -646,6 +770,30 @@
           "primaryKey": false,
           "notNull": false,
           "default": false
+        },
+        "security_deposit": {
+          "name": "security_deposit",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "agreement_duration": {
+          "name": "agreement_duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lock_in_period": {
+          "name": "lock_in_period",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notice_period": {
+          "name": "notice_period",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "advance_payment": {
           "name": "advance_payment",
@@ -739,29 +887,11 @@
           "primaryKey": false,
           "notNull": true
         },
-        "room_type": {
-          "name": "room_type",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "rent": {
-          "name": "rent",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "square_footage": {
-          "name": "square_footage",
+        "room_type_id": {
+          "name": "room_type_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
-        },
-        "occupancy_limit": {
-          "name": "occupancy_limit",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "available_beds": {
           "name": "available_beds",
@@ -796,6 +926,19 @@
           "tableTo": "floor",
           "columnsFrom": [
             "floor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "room_room_type_id_room_type_id_fk": {
+          "name": "room_room_type_id_room_type_id_fk",
+          "tableFrom": "room",
+          "tableTo": "room_type",
+          "columnsFrom": [
+            "room_type_id"
           ],
           "columnsTo": [
             "id"
@@ -873,6 +1016,72 @@
           "tableTo": "room_feature",
           "columnsFrom": [
             "feature_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.room_type": {
+      "name": "room_type",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "property_id": {
+          "name": "property_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rent": {
+          "name": "rent",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "square_footage": {
+          "name": "square_footage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "occupancy_limit": {
+          "name": "occupancy_limit",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bed_rate": {
+          "name": "bed_rate",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "room_type_property_id_property_id_fk": {
+          "name": "room_type_property_id_property_id_fk",
+          "tableFrom": "room_type",
+          "tableTo": "property",
+          "columnsFrom": [
+            "property_id"
           ],
           "columnsTo": [
             "id"
@@ -1010,6 +1219,13 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -1021,6 +1237,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
+          ]
+        },
+        "user_phone_unique": {
+          "name": "user_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
           ]
         }
       }
