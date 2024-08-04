@@ -1,10 +1,23 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { NestDrizzleModule } from './drizzle/drizzle.module';
+import * as schema from './drizzle/schema';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    NestDrizzleModule.forRootAsync({
+      useFactory: () => {
+        return {
+          driver: 'postgres-js',
+          url: process.env.DATABASE_URL,
+          options: { schema },
+          migrationOptions: { migrationsFolder: './src/drizzle/migrations' },
+        };
+      },
+    }),
+  ],
 })
 export class AppModule {}
