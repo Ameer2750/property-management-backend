@@ -1,5 +1,5 @@
 {
-  "id": "93de4418-bc58-4ff8-8582-26dc71f1e8f2",
+  "id": "d7b12bd4-be7d-4188-a7a8-e56333e1f8b7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -190,12 +190,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "property_id": {
-          "name": "property_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
         "floor_number": {
           "name": "floor_number",
           "type": "integer",
@@ -210,21 +204,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "floor_property_id_property_id_fk": {
-          "name": "floor_property_id_property_id_fk",
-          "tableFrom": "floor",
-          "tableTo": "property",
-          "columnsFrom": [
-            "property_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -728,6 +708,61 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "public.property_floor": {
+      "name": "property_floor",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "property_id": {
+          "name": "property_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "floor_id": {
+          "name": "floor_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "property_floor_property_id_property_id_fk": {
+          "name": "property_floor_property_id_property_id_fk",
+          "tableFrom": "property_floor",
+          "tableTo": "property",
+          "columnsFrom": [
+            "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "property_floor_floor_id_floor_id_fk": {
+          "name": "property_floor_floor_id_floor_id_fk",
+          "tableFrom": "property_floor",
+          "tableTo": "floor",
+          "columnsFrom": [
+            "floor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.property_owner": {
       "name": "property_owner",
       "schema": "",
@@ -970,12 +1005,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "bed_rate": {
-          "name": "bed_rate",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": true
-        },
         "availability_status": {
           "name": "availability_status",
           "type": "varchar(50)",
@@ -1089,12 +1118,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "property_id": {
-          "name": "property_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
         "name": {
           "name": "name",
           "type": "varchar(255)",
@@ -1104,12 +1127,6 @@
         "rent": {
           "name": "rent",
           "type": "numeric",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "square_footage": {
-          "name": "square_footage",
-          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -1123,25 +1140,11 @@
           "name": "bed_rate",
           "type": "numeric",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "room_type_property_id_property_id_fk": {
-          "name": "room_type_property_id_property_id_fk",
-          "tableFrom": "room_type",
-          "tableTo": "property",
-          "columnsFrom": [
-            "property_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

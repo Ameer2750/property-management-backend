@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS "document" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "floor" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"property_id" integer,
 	"floor_number" integer NOT NULL,
 	"name" varchar(255)
 );
@@ -102,6 +101,12 @@ CREATE TABLE IF NOT EXISTS "property_address" (
 	"address_id" integer
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "property_floor" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"property_id" integer,
+	"floor_id" serial NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "property_owner" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"property_id" integer,
@@ -134,7 +139,6 @@ CREATE TABLE IF NOT EXISTS "room" (
 	"room_type_id" integer,
 	"available_beds" integer NOT NULL,
 	"occupied_beds" integer NOT NULL,
-	"bed_rate" numeric NOT NULL,
 	"availability_status" varchar(50) NOT NULL
 );
 --> statement-breakpoint
@@ -151,12 +155,10 @@ CREATE TABLE IF NOT EXISTS "room_room_feature" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "room_type" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"property_id" integer,
 	"name" varchar(255),
 	"rent" numeric,
-	"square_footage" integer,
 	"occupancy_limit" integer,
-	"bed_rate" numeric
+	"bed_rate" numeric NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "tenant" (
@@ -200,12 +202,6 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "document" ADD CONSTRAINT "document_rent_agreement_id_rent_agreement_id_fk" FOREIGN KEY ("rent_agreement_id") REFERENCES "public"."rent_agreement"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "floor" ADD CONSTRAINT "floor_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -283,6 +279,18 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "property_floor" ADD CONSTRAINT "property_floor_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "property_floor" ADD CONSTRAINT "property_floor_floor_id_floor_id_fk" FOREIGN KEY ("floor_id") REFERENCES "public"."floor"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "property_owner" ADD CONSTRAINT "property_owner_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -326,12 +334,6 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "room_room_feature" ADD CONSTRAINT "room_room_feature_feature_id_room_feature_id_fk" FOREIGN KEY ("feature_id") REFERENCES "public"."room_feature"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "room_type" ADD CONSTRAINT "room_type_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

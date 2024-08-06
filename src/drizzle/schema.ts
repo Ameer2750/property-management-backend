@@ -56,22 +56,27 @@ export const property = pgTable('property', {
   suitability: varchar('suitability', { length: 200 })
 });
 
+
 export const floor = pgTable('floor', {
   id: serial('id').primaryKey(),
-  propertyId: integer('property_id').references(() => property.id),
   floorNumber: integer('floor_number').notNull(),
   name: varchar('name', { length: 255 }),
 });
 
+export const propertyFloor = pgTable('property_floor', {
+  id: serial('id').primaryKey(),
+  propertyId: integer('property_id').references(() => property.id),
+  floorId: serial('floor_id').references(() => floor.id)
+});
+
+
 export const roomType = pgTable('room_type', {
   id: serial('id').primaryKey(),
-  property_id: integer('property_id').references(() => property.id),
   name: varchar('name', { length: 255 }),
   rent: decimal('rent'),
-  square_footage: integer('square_footage'),
   occupancy_limit: integer('occupancy_limit'),
-  bedRate: decimal('bed_rate')
-})
+  bedRate: numeric('bed_rate').notNull(),
+});
 
 export const room = pgTable('room', {
   id: serial('id').primaryKey(),
@@ -79,7 +84,6 @@ export const room = pgTable('room', {
   roomTypeId: integer('room_type_id').references(() => roomType.id),
   availableBeds: integer('available_beds').notNull(),
   occupiedBeds: integer('occupied_beds').notNull(),
-  bedRate: numeric('bed_rate').notNull(),
   availabilityStatus: varchar('availability_status', { length: 50 }).notNull(),
 });
 

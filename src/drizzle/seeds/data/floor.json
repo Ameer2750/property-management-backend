@@ -1,0 +1,22 @@
+[
+    {
+        "floorNumber": 0,
+        "name": "GROUND FLOOR"
+    },
+    {
+        "floorNumber": 1,
+        "name": "FIRST FLOOR"
+    },
+    {
+        "floorNumber": 2,
+        "name": "THIRD FLOOR"
+    },
+    {
+        "floorNumber": 3,
+        "name": "FOURTH FLOOR"
+    },
+    {
+        "floorNumber": 4,
+        "name": "FIFTH FLOOR"
+    }
+]

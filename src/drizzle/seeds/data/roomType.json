@@ -1,0 +1,26 @@
+[
+    {
+        "name": "SINGLE SHARING",
+        "rent": "10000",
+        "bedRate": "10000",
+        "occupancy_limit": 1
+    },
+    {
+        "name": "DOUBLE SHARING",
+        "rent": "20000",
+        "bedRate": "10000",
+        "occupancy_limit": 2
+    },
+    {
+        "name": "THREE SHARING",
+        "rent": "30000",
+        "bedRate": "10000",
+        "occupancy_limit": 3
+    },
+    {
+        "name": "FOUR SHARING",
+        "rent": "40000",
+        "bedRate": "10000",
+        "occupancy_limit": 4
+    }
+]
