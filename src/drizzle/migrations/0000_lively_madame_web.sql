@@ -1,7 +1,11 @@
+DO $$ BEGIN
+ CREATE TYPE "public"."role" AS ENUM('owner', 'tenant', 'admin');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "address" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"property_id" integer,
-	"user_id" integer,
 	"block_no" varchar(255),
 	"locality" varchar(255),
 	"city" varchar(255),
@@ -86,6 +90,12 @@ CREATE TABLE IF NOT EXISTS "property" (
 	"suitability" varchar(200)
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "property_address" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"property_id" integer,
+	"address_id" integer
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "property_owner" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"property_id" integer,
@@ -158,24 +168,18 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"username" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"phone" varchar(20),
-	"role" varchar(50) NOT NULL,
+	"role" "role",
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email"),
 	CONSTRAINT "user_phone_unique" UNIQUE("phone")
 );
 --> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "address" ADD CONSTRAINT "address_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "address" ADD CONSTRAINT "address_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
+CREATE TABLE IF NOT EXISTS "user_address" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"address_id" integer,
+	"user_id" integer
+);
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "bed_allocation" ADD CONSTRAINT "bed_allocation_room_id_room_id_fk" FOREIGN KEY ("room_id") REFERENCES "public"."room"("id") ON DELETE no action ON UPDATE no action;
@@ -245,6 +249,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "property" ADD CONSTRAINT "property_address_id_address_id_fk" FOREIGN KEY ("address_id") REFERENCES "public"."address"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "property_address" ADD CONSTRAINT "property_address_property_id_property_id_fk" FOREIGN KEY ("property_id") REFERENCES "public"."property"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "property_address" ADD CONSTRAINT "property_address_address_id_address_id_fk" FOREIGN KEY ("address_id") REFERENCES "public"."address"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -323,6 +339,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "tenant" ADD CONSTRAINT "tenant_room_id_room_id_fk" FOREIGN KEY ("room_id") REFERENCES "public"."room"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_address" ADD CONSTRAINT "user_address_address_id_address_id_fk" FOREIGN KEY ("address_id") REFERENCES "public"."address"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_address" ADD CONSTRAINT "user_address_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

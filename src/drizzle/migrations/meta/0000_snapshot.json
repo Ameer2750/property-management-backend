@@ -1,5 +1,5 @@
 {
-  "id": "ce3fcb01-dcb8-49e1-a8c7-c0e37f5e0174",
+  "id": "d375778b-ca3f-428d-b884-cb537966ec46",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -13,18 +13,6 @@
           "type": "serial",
           "primaryKey": true,
           "notNull": true
-        },
-        "property_id": {
-          "name": "property_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
         },
         "block_no": {
           "name": "block_no",
@@ -65,34 +53,7 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "address_property_id_property_id_fk": {
-          "name": "address_property_id_property_id_fk",
-          "tableFrom": "address",
-          "tableTo": "property",
-          "columnsFrom": [
-            "property_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "address_user_id_user_id_fk": {
-          "name": "address_user_id_user_id_fk",
-          "tableFrom": "address",
-          "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -643,6 +604,61 @@
         "property_address_id_address_id_fk": {
           "name": "property_address_id_address_id_fk",
           "tableFrom": "property",
+          "tableTo": "address",
+          "columnsFrom": [
+            "address_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.property_address": {
+      "name": "property_address",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "property_id": {
+          "name": "property_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_id": {
+          "name": "address_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "property_address_property_id_property_id_fk": {
+          "name": "property_address_property_id_property_id_fk",
+          "tableFrom": "property_address",
+          "tableTo": "property",
+          "columnsFrom": [
+            "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "property_address_address_id_address_id_fk": {
+          "name": "property_address_address_id_address_id_fk",
+          "tableFrom": "property_address",
           "tableTo": "address",
           "columnsFrom": [
             "address_id"
@@ -1209,9 +1225,10 @@
         },
         "role": {
           "name": "role",
-          "type": "varchar(50)",
+          "type": "role",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -1247,9 +1264,74 @@
           ]
         }
       }
+    },
+    "public.user_address": {
+      "name": "user_address",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "address_id": {
+          "name": "address_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_address_address_id_address_id_fk": {
+          "name": "user_address_address_id_address_id_fk",
+          "tableFrom": "user_address",
+          "tableTo": "address",
+          "columnsFrom": [
+            "address_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "user_address_user_id_user_id_fk": {
+          "name": "user_address_user_id_user_id_fk",
+          "tableFrom": "user_address",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     }
   },
-  "enums": {},
+  "enums": {
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "owner",
+        "tenant",
+        "admin"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "_meta": {

@@ -1,19 +1,25 @@
-import { pgTable, serial, varchar, timestamp, boolean, integer, numeric, decimal } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, timestamp, boolean, integer, numeric, decimal, pgEnum, } from 'drizzle-orm/pg-core';
+
+
+export const OWNER = 'owner';
+export const TENANT = 'tenant';
+export const ADMIN = 'admin';
+
+export const roleEnum = pgEnum('role', [OWNER, TENANT, ADMIN]);
 
 export const user = pgTable('user', {
   id: serial('id').primaryKey(),
   username: varchar('username', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).unique().notNull(),
   phone: varchar('phone', { length: 20 }).unique(), // Ensure this line is correct
-  role: varchar('role', { length: 50 }).notNull(),
+  role: roleEnum('role'), // Use the enum directly
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+
 export const address = pgTable('address', {
   id: serial('id').primaryKey(),
-  propertyId: integer('property_id').references(() => property.id),
-  userId: integer('user_id').references(() => user.id),
   blockNo: varchar('block_no', { length: 255 }),
   locality: varchar('locality', { length: 255 }),
   city: varchar('city', { length: 255 }),
@@ -21,6 +27,18 @@ export const address = pgTable('address', {
   pincode: varchar('pincode', { length: 255 }),
   country: varchar('country', { length: 255 }).default('India')
 });
+
+export const userAddress = pgTable('user_address', {
+  id: serial('id').primaryKey(),
+  addressId: integer('address_id').references(() => address.id),
+  userId: integer('user_id').references(() => user.id)
+})
+
+export const propertyAddress = pgTable('property_address', {
+  id: serial('id').primaryKey(),
+  propertyId: integer('property_id').references(() => property.id),
+  addressId: integer('address_id').references(() => address.id),
+})
 
 export const propertyOwner = pgTable('property_owner', {
   id: serial('id').primaryKey(),
@@ -48,7 +66,7 @@ export const floor = pgTable('floor', {
 export const roomType = pgTable('room_type', {
   id: serial('id').primaryKey(),
   property_id: integer('property_id').references(() => property.id),
-  name: varchar('name', {length: 255}),
+  name: varchar('name', { length: 255 }),
   rent: decimal('rent'),
   square_footage: integer('square_footage'),
   occupancy_limit: integer('occupancy_limit'),
