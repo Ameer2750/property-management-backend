@@ -1,5 +1,5 @@
 {
-  "id": "d375778b-ca3f-428d-b884-cb537966ec46",
+  "id": "93de4418-bc58-4ff8-8582-26dc71f1e8f2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -217,6 +217,61 @@
           "tableTo": "property",
           "columnsFrom": [
             "property_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.floor_room": {
+      "name": "floor_room",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "floor_id": {
+          "name": "floor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "room_id": {
+          "name": "room_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "floor_room_floor_id_floor_id_fk": {
+          "name": "floor_room_floor_id_floor_id_fk",
+          "tableFrom": "floor_room",
+          "tableTo": "floor",
+          "columnsFrom": [
+            "floor_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "floor_room_room_id_room_id_fk": {
+          "name": "floor_room_room_id_room_id_fk",
+          "tableFrom": "floor_room",
+          "tableTo": "room",
+          "columnsFrom": [
+            "room_id"
           ],
           "columnsTo": [
             "id"
@@ -891,12 +946,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "floor_id": {
-          "name": "floor_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
         "name": {
           "name": "name",
           "type": "varchar(255)",
@@ -936,19 +985,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "room_floor_id_floor_id_fk": {
-          "name": "room_floor_id_floor_id_fk",
-          "tableFrom": "room",
-          "tableTo": "floor",
-          "columnsFrom": [
-            "floor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "room_room_type_id_room_type_id_fk": {
           "name": "room_room_type_id_room_type_id_fk",
           "tableFrom": "room",
