@@ -75,13 +75,18 @@ export const roomType = pgTable('room_type', {
 
 export const room = pgTable('room', {
   id: serial('id').primaryKey(),
-  floorId: integer('floor_id').references(() => floor.id),
   name: varchar('name', { length: 255 }).notNull(),
   roomTypeId: integer('room_type_id').references(() => roomType.id),
   availableBeds: integer('available_beds').notNull(),
   occupiedBeds: integer('occupied_beds').notNull(),
   bedRate: numeric('bed_rate').notNull(),
   availabilityStatus: varchar('availability_status', { length: 50 }).notNull(),
+});
+
+export const floorRoomTable = pgTable('floor_room', {
+  id: serial('id').primaryKey(),
+  floorId: integer('floor_id').references(() => floor.id),
+  roomId: integer('room_id').references(() => room.id),
 });
 
 export const bedAllocation = pgTable('bed_allocation', {
@@ -135,7 +140,6 @@ export const payment = pgTable('payment', {
   paymentForPeriod: varchar('payment_for_period', { length: 50 }).notNull(),
   status: varchar('status', { length: 50 }).notNull(),
 });
-
 
 export const maintenanceRequest = pgTable('maintenance_request', {
   id: serial('id').primaryKey(),
