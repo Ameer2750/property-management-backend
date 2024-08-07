@@ -58,5 +58,13 @@ export class PropertiesService {
         }
     }
 
+    public async getRoomType() {
+        return this.drizzle.query.roomType.findMany();
+    }
+
     public async createPropertyRoomOption() {}
+
+
+
+
 }
