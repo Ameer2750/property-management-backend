@@ -1,8 +1,7 @@
+import { RoleEnum } from './../../../drizzle/schema';
+import { IsString, IsEmail, IsNotEmpty, MinLength, IsOptional } from 'class-validator';
 
-import { IsOptional, IsString, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
-import { RoleEnum } from '../../../drizzle/schema'; // Adjust path as needed
-
-export class CreateUserDto {
+export class SignUpDto {
   @IsString()
   @IsNotEmpty()
   firstName: string;
@@ -23,5 +22,5 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
-  role?: string;
+  role?: typeof RoleEnum;
 }

@@ -1,10 +1,8 @@
-import {
-  DRIZZLE_ORM,
-  NEST_DRIZZLE_OPTIONS,
-} from '../common/utilities/constants';
+
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { DrizzleService } from './drizzle.service';
 import { NestDrizzleOptions } from './interfaces/drizzle.interface';
+import { DRIZZLE_ORM, NEST_DRIZZLE_OPTIONS } from 'src/common/utilities/constants/db.constant';
 
 export const connectionFactory = {
   provide: DRIZZLE_ORM,

@@ -1,21 +1,40 @@
-import { pgTable, serial, varchar, timestamp, boolean, integer, numeric, decimal, pgEnum, } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, timestamp, boolean, integer, numeric, decimal, uniqueIndex } from 'drizzle-orm/pg-core';
+
+export const RoleEnum = {
+  OWNER: 'OWNER',
+  TENANT: 'TENANT',
+  ADMIN: "ADMIN"
+} as const;
 
 
-export const OWNER = 'owner';
-export const TENANT = 'tenant';
-export const ADMIN = 'admin';
+export const user = pgTable(
+  'user',
+  {
+    id: serial('id').primaryKey(),
+    firstName: varchar('first_name', { length: 255 }).notNull(),
+    lastName: varchar('last_name', { length: 255 }),
+    email: varchar('email', { length: 255 }).unique().notNull(),
+    phone: varchar('phone', { length: 255 }).unique().notNull(),
+    password: varchar('password', { length: 255 }).notNull(),
+    accountStatus: boolean('account_status').default(false).notNull(),
+    role: varchar('role', {length: 255}).notNull().default(RoleEnum.OWNER),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      emailIndex: uniqueIndex().on(table.email),
+    };
+  },
+);
 
-export const roleEnum = pgEnum('role', [OWNER, TENANT, ADMIN]);
 
-export const user = pgTable('user', {
+export const authRefreshToken = pgTable('auth_refresh_token', {
   id: serial('id').primaryKey(),
-  username: varchar('username', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).unique().notNull(),
-  phone: varchar('phone', { length: 20 }).unique(), // Ensure this line is correct
-  role: roleEnum('role'), // Use the enum directly
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-});
+  refreshToken: varchar('refresh_token', {length: 1000}),
+  userId: integer('user_id').references(() => user.id).notNull(),
+  expiresAt: timestamp('expires_at')
+})
 
 
 export const address = pgTable('address', {

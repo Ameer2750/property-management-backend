@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { DRIZZLE_ORM } from "src/common/utilities/constants";
 import * as schema from '../drizzle/schema';
 import { CreatePropertyType } from "./types";
+import { DRIZZLE_ORM } from "src/common/utilities/constants/db.constant";
 
 @Injectable()
 export class PropertiesService {

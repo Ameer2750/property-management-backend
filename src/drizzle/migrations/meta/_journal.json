@@ -8,6 +8,13 @@
       "when": 1722958881726,
       "tag": "0000_needy_ender_wiggin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1723390756099,
+      "tag": "0001_wandering_magma",
+      "breakpoints": true
     }
   ]
 }
